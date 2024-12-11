@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Repack;
 use Illuminate\Console\Command;
+use Telegram\Bot\Laravel\Facades\Telegram;
 
 class RepacksParseCommand extends Command
 {
@@ -27,6 +28,23 @@ class RepacksParseCommand extends Command
     public function handle() {
         $test = new Repack('TeSt');
 
+        $this->sendCompletionReportToTelegram();
         dd($test->requirements);
+    }
+
+    /**
+     * Send completion report to Telegram chat.
+     */
+    private function sendCompletionReportToTelegram(): void
+    {
+        try {
+            Telegram::sendMessage([
+                'chat_id' => config('telegram.bots.telegram_bot.chat_id'),
+                'text' => 'Job: Repack parsing finished successfully!',
+            ]);
+            dump('Report sent to Telegram');
+        } catch (Exception $e) {
+            dump('An error occurred while sending report to Telegram: ', $e->getMessage());
+        }
     }
 }
