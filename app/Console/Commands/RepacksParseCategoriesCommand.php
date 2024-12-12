@@ -3,17 +3,19 @@
 namespace App\Console\Commands;
 
 use App\Models\Repack;
+use App\Services\XatabService;
+use Exception;
 use Illuminate\Console\Command;
 use Telegram\Bot\Laravel\Facades\Telegram;
 
-class RepacksParseCommand extends Command
+class RepacksParseCategoriesCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'app:repacks-parse';
+    protected $signature = 'app:repacks-parse-categories';
 
     /**
      * The console command description.
@@ -26,6 +28,12 @@ class RepacksParseCommand extends Command
      * Execute the console command.
      */
     public function handle() {
+        $xatabService = new XatabService();
+
+        $xatabService->parseCategories();
+
+
+
         $test = new Repack('TeSt');
 
         $this->sendCompletionReportToTelegram();
