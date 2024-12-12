@@ -23,7 +23,7 @@ class XatabService
         $dom = new Dom();
         $html = $dom->loadFromUrl($this->url);
 
-        foreach($html->find('div.block.block_categories ul li a') as $categoryLink) {
+        foreach ($html->find('div.block.block_categories ul li a') as $categoryLink) {
             $categoryUrl = $categoryLink->href;
             $categoryName = $categoryLink->text;
 
@@ -33,12 +33,21 @@ class XatabService
 //        dd($this->url);
     }
 
-    public function parseCategory(string $category)
+    /**
+     * @param string $categoryUrl
+     * @return void
+     * @throws \PHPHtmlParser\Exceptions\ChildNotFoundException
+     * @throws \PHPHtmlParser\Exceptions\CircularException
+     * @throws \PHPHtmlParser\Exceptions\CurlException
+     * @throws \PHPHtmlParser\Exceptions\NotLoadedException
+     * @throws \PHPHtmlParser\Exceptions\StrictException
+     */
+    public function parseCategory(string $categoryUrl)
     {
         $dom = new Dom();
-        $html = $dom->loadFromUrl($category);
+        $html = $dom->loadFromUrl($categoryUrl);
 
-        foreach($html->find('section.main__content div.entry') as $game) {
+        foreach ($html->find('section.main__content div.entry') as $game) {
 
 //            dd($game->find('a')->text);
             $gameUrl = $game->find('div.entry__title.h2 a')->href;
@@ -52,5 +61,33 @@ class XatabService
         }
 
         dd($this->url);
+    }
+
+    public function parseGame(string $gameUrl)
+    {
+        $dom = new Dom();
+        $html = $dom->loadFromUrl($gameUrl);
+
+        $gameTitle = $html->find('h1.inner-entry__title')->text;
+        $gameSize = $html->find('span.entry__info-size')->text;
+        $gameDetails = $html->find('div.inner-entry__details')->text;
+        $gameSystemReqs = $html->find('ul.inner-entry__sysreq-list');
+
+        foreach ($gameSystemReqs->find('li') as $gameSystemReq) {
+//            dump ($gameSystemReq->text);
+        }
+
+        $gameDescriptionSpans = $html->find('div#msg');
+
+        foreach ($gameDescriptionSpans->find('span') as $gameDescriptionSpan) {
+            if (!strlen($gameDescriptionSpan->text)) continue;
+
+            $descriptionSpan = trim($gameDescriptionSpan->text);
+            dump ($descriptionSpan);
+        }
+
+        $gameTorrentUrl = $html->find('div#download a')->href;
+
+//        dd($gameDescription);
     }
 }
