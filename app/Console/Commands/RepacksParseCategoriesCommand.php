@@ -30,7 +30,8 @@ class RepacksParseCategoriesCommand extends Command
     public function handle() {
         $xatabService = new XatabService();
 
-        $xatabService->parseCategories();
+        $xatabService->parseAllCategories();
+        $xatabService->parseCategory('https://byxatab.com/torrent_igry/rpg/');
 
 
 
