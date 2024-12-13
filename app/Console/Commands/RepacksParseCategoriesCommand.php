@@ -30,16 +30,12 @@ class RepacksParseCategoriesCommand extends Command
     public function handle() {
         $xatabService = new XatabService();
 
-//        $xatabService->parseAllCategories();
-//        $xatabService->parseCategory('https://byxatab.com/torrent_igry/rpg/');
-        $xatabService->parseGame('https://byxatab.com/games/torrent_igry/rpg/horizon-zero-dawn-remastered-2024/2-1-0-3525');
+        $xatabService->parseAllCategories();
+        $xatabService->parseCategory('https://byxatab.com/torrent_igry/rpg/');
+//        $xatabService->parseGame('https://byxatab.com/games/torrent_igry/rpg/horizon-zero-dawn-remastered-2024/2-1-0-3525');
 
-
-
-        $test = new Repack('TeSt');
 
         $this->sendCompletionReportToTelegram();
-        dd($test->requirements);
     }
 
     /**
@@ -50,7 +46,7 @@ class RepacksParseCategoriesCommand extends Command
         try {
             Telegram::sendMessage([
                 'chat_id' => config('telegram.bots.telegram_bot.chat_id'),
-                'text' => 'Job: Repack parsing finished successfully!',
+                'text' => 'Job: Repack categories parsing finished successfully!',
             ]);
             dump('Report sent to Telegram');
         } catch (Exception $e) {

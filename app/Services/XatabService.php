@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\Repack;
+use App\Models\RepackCategory;
 use PHPHtmlParser\Dom;
 
 class XatabService
@@ -27,7 +29,12 @@ class XatabService
             $categoryUrl = $categoryLink->href;
             $categoryName = $categoryLink->text;
 
-//            dump($categoryName);
+            $repackCategory = new RepackCategory([
+                'name' => $categoryName,
+                'url' => $categoryUrl,
+            ]);
+            $repackCategory->save();
+
         }
 
 //        dd($this->url);
@@ -56,8 +63,14 @@ class XatabService
             $gameDescription = trim($game->find('div.entry__content-description')->text);
             $gameUpdateDate = $game->find('div.entry__info-categories')->text; //todo: change Today to date
 
-            dd($gameUpdateDate);
-            dd($gameTitle);
+            $repack = new Repack([
+                'title' => $gameTitle,
+                'repack_url' => $gameUrl,
+                'image' => $gameImg,
+                'description' => $gameDescription,
+                'update_date' => $gameUpdateDate,
+            ]);
+            $repack->save();
         }
 
         dd($this->url);
@@ -83,7 +96,7 @@ class XatabService
             if (!strlen($gameDescriptionSpan->text)) continue;
 
             $descriptionSpan = trim($gameDescriptionSpan->text);
-            dump ($descriptionSpan);
+            dump($descriptionSpan);
         }
 
         $gameTorrentUrl = $html->find('div#download a')->href;

@@ -11,14 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('games', function (Blueprint $table) {
+        Schema::create('repacks', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('title');
+            $table->boolean('tg_posted')->default(false);
             $table->string('genre')->nullable();
             $table->string('language', 2)->default('en');
+            $table->string('size')->nullable();
             $table->string('release_date')->nullable();
-            $table->string('image_url')->nullable();
+            $table->string('repack_url')->nullable();
+            $table->text('requirements')->nullable();
+            $table->string('image')->nullable();
+            $table->string('file')->nullable();
             $table->text('description')->nullable();
+            $table->string('update_date')->nullable();
+            $table->timestamp('posted_at')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('games');
+        Schema::dropIfExists('repacks');
     }
 };

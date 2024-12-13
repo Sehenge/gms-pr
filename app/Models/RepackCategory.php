@@ -8,6 +8,6 @@ class RepackCategory extends Model
 {
     public $fillable = [
         'name',
-        'lang'
+        'url',
     ];
 }

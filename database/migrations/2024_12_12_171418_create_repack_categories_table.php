@@ -14,7 +14,15 @@ return new class extends Migration
         Schema::create('repack_categories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('lang');
+            $table->string('url');
+
+            /*$table->string('title');
+            $table->string('lang')->default('ru');
+            $table->string('url');
+            $table->string('image');
+            $table->text('description');
+            $table->string('update_data');*/
+
             $table->timestamps();
         });
     }
