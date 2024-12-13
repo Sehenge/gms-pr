@@ -80,10 +80,13 @@ class XatabService
         $gameSystemReqs = $html->find('ul.inner-entry__sysreq-list');
 
         foreach ($gameSystemReqs->find('li') as $gameSystemReq) {
-//            dump ($gameSystemReq->text);
+            dd($gameSystemReq->text);
+
         }
 
         $gameDescriptionSpans = $html->find('div#msg');
+
+        dd($gameDescriptionSpans);
 
         foreach ($gameDescriptionSpans->find('span') as $gameDescriptionSpan) {
             if (!strlen($gameDescriptionSpan->text)) continue;
