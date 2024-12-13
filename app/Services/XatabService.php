@@ -29,12 +29,10 @@ class XatabService
             $categoryUrl = $categoryLink->href;
             $categoryName = $categoryLink->text;
 
-            $repackCategory = new RepackCategory([
+            RepackCategory::updateOrInsert([
                 'name' => $categoryName,
                 'url' => $categoryUrl,
             ]);
-            $repackCategory->save();
-
         }
 
 //        dd($this->url);
@@ -55,25 +53,20 @@ class XatabService
         $html = $dom->loadFromUrl($categoryUrl);
 
         foreach ($html->find('section.main__content div.entry') as $game) {
-
-//            dd($game->find('a')->text);
             $gameUrl = $game->find('div.entry__title.h2 a')->href;
             $gameTitle = $game->find('div.entry__title.h2 a')->text;
             $gameImg = $game->find('div.entry_content img')->src;
             $gameDescription = trim($game->find('div.entry__content-description')->text);
             $gameUpdateDate = $game->find('div.entry__info-categories')->text; //todo: change Today to date
 
-            $repack = new Repack([
+            Repack::updateOrInsert([
                 'title' => $gameTitle,
                 'repack_url' => $gameUrl,
                 'image' => $gameImg,
                 'description' => $gameDescription,
                 'update_date' => $gameUpdateDate,
             ]);
-            $repack->save();
         }
-
-        dd($this->url);
     }
 
     public function parseGame(string $gameUrl)

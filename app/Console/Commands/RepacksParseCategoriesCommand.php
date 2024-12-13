@@ -31,7 +31,7 @@ class RepacksParseCategoriesCommand extends Command
         $xatabService = new XatabService();
 
         $xatabService->parseAllCategories();
-        $xatabService->parseCategory('https://byxatab.com/torrent_igry/rpg/');
+//        $xatabService->parseCategory('https://byxatab.com/torrent_igry/rpg/');
 //        $xatabService->parseGame('https://byxatab.com/games/torrent_igry/rpg/horizon-zero-dawn-remastered-2024/2-1-0-3525');
 
 
