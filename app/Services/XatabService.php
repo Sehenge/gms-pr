@@ -35,7 +35,6 @@ class XatabService
             ]);
         }
 
-//        dd($this->url);
     }
 
     /**
@@ -47,10 +46,10 @@ class XatabService
      * @throws \PHPHtmlParser\Exceptions\NotLoadedException
      * @throws \PHPHtmlParser\Exceptions\StrictException
      */
-    public function parseCategory(string $categoryUrl)
+    public function parseCategory(RepackCategory $category): void
     {
         $dom = new Dom();
-        $html = $dom->loadFromUrl($categoryUrl);
+        $html = $dom->loadFromUrl($category->url);
 
         foreach ($html->find('section.main__content div.entry') as $game) {
             $gameUrl = $game->find('div.entry__title.h2 a')->href;
@@ -65,38 +64,65 @@ class XatabService
                 'image' => $gameImg,
                 'description' => $gameDescription,
                 'update_date' => $gameUpdateDate,
+                'category_id' => $category->id
             ]);
         }
     }
 
-    public function parseGame(string $gameUrl)
+    public function parseGame(Repack $game)
     {
         $dom = new Dom();
-        $html = $dom->loadFromUrl($gameUrl);
+        $html = $dom->loadFromUrl($game->repack_url);
 
         $gameTitle = $html->find('h1.inner-entry__title')->text;
         $gameSize = $html->find('span.entry__info-size')->text;
-        $gameDetails = $html->find('div.inner-entry__details')->text;
+        $gameDetails = $html->find('div.inner-entry__details')->innerHTML;
         $gameSystemReqs = $html->find('ul.inner-entry__sysreq-list');
 
+        $requirements = '';
         foreach ($gameSystemReqs->find('li') as $gameSystemReq) {
-            dd($gameSystemReq->text);
-
+            $requirements .= $gameSystemReq->text;
         }
 
+        $descriptionSpan = '';
         $gameDescriptionSpans = $html->find('div#msg');
-
-        dd($gameDescriptionSpans);
-
         foreach ($gameDescriptionSpans->find('span') as $gameDescriptionSpan) {
             if (!strlen($gameDescriptionSpan->text)) continue;
 
-            $descriptionSpan = trim($gameDescriptionSpan->text);
-            dump($descriptionSpan);
+            $descriptionSpan .= trim($gameDescriptionSpan->text) . "\n";
         }
 
-        $gameTorrentUrl = $html->find('div#download a')->href;
+        preg_match('/Год выпуска: <\/strong> (.*?)<br \/>/', $gameDetails, $releaseDate);
 
-//        dd($gameDescription);
+        $genres = [];
+        $html->find('div.inner-entry__details a')->each(function ($genre = '') use (&$genres) {
+            if (trim($genre->text) !== '')
+                $genres[] = $genre->text;
+        });
+        $genre = implode(', ', $genres);
+
+        $gameTorrentUrl = $html->find('div#download a');
+        $gameTorrentUrl = !sizeof($gameTorrentUrl) ? '' : $gameTorrentUrl->href;
+
+        $postedAt = $html->find('span.entry__date')->text;
+
+        $this->updateRepackInformation([
+            'id' => $game->id,
+            'title' => $gameTitle,
+            'repack_url' => $game->repack_url,
+            'description' => $descriptionSpan,
+            'size' => $gameSize,
+            'file' => $gameTorrentUrl,
+            'genre' => $genre,
+            'release_date' => $releaseDate[1],
+            'posted_at' => $postedAt,
+            'parsed' => true
+        ]);
+    }
+
+    private function updateRepackInformation(array $repackArray)
+    {
+        Repack::find($repackArray['id'])
+            ->update($repackArray);
     }
 }

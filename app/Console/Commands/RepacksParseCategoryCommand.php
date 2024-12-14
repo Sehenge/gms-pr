@@ -3,19 +3,19 @@
 namespace App\Console\Commands;
 
 use App\Models\Repack;
+use App\Models\RepackCategory;
 use App\Services\XatabService;
-use Exception;
 use Illuminate\Console\Command;
 use Telegram\Bot\Laravel\Facades\Telegram;
 
-class RepacksParseGamesCommand extends Command
+class RepacksParseCategoryCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'app:repacks-parse-games';
+    protected $signature = 'app:repacks-parse-category';
 
     /**
      * The console command description.
@@ -27,22 +27,26 @@ class RepacksParseGamesCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle() {
-        $games = Repack::where('parsed', false)->get();
+    public function handle()
+    {
+        $repackCategories = RepackCategory::all();
 
         $xatabService = new XatabService();
 
-        foreach ($games as $game) {
-            $xatabService->parseGame($game);
+        foreach ($repackCategories as $repackCategory) {
+            $xatabService->parseCategory($repackCategory);
+
+            $repackCategory->parsed = true;
+            $repackCategory->save();
+
+            die();
         }
 
         $this->sendCompletionReportToTelegram();
+
     }
 
-    /**
-     * Send completion report to Telegram chat.
-     */
-    private function sendCompletionReportToTelegram(): void
+    private function sendCompletionReportToTelegram(): void //TODO: MOVE TO SERVICE
     {
         try {
             Telegram::sendMessage([

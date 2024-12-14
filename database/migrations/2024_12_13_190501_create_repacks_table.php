@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('genre')->nullable();
             $table->string('language', 2)->default('en');
             $table->string('size')->nullable();
+            $table->foreignId('category_id')->references('id')->on('repack_categories')->onDelete('cascade');
             $table->string('release_date')->nullable();
             $table->string('repack_url')->nullable();
             $table->text('requirements')->nullable();
