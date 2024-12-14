@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 
 class Repack extends Model
@@ -13,6 +14,7 @@ class Repack extends Model
         'image',
         'repack_url',
         'description',
+        'category_id',
         'update_date'
     ];
 
@@ -21,5 +23,10 @@ class Repack extends Model
         set(string $requirements) {
             $this->requirements = strtoupper($requirements);
         }
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(RepackCategory::class, 'category_id', 'id');
     }
 }
