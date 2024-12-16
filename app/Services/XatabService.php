@@ -106,7 +106,7 @@ class XatabService
 
         $postedAt = $html->find('span.entry__date')->text;
 
-        $this->updateRepackInformation([
+        $repack = $this->updateRepackInformation([
             'id' => $game->id,
             'title' => $gameTitle,
             'repack_url' => $game->repack_url,
@@ -116,13 +116,17 @@ class XatabService
             'genre' => $genre,
             'release_date' => $releaseDate[1],
             'posted_at' => $postedAt,
-            'parsed' => true
+            'parsed' => false
         ]);
+
+        TelegramService::sendCompletionReportToTelegram($repack);
     }
 
     private function updateRepackInformation(array $repackArray)
     {
-        Repack::find($repackArray['id'])
-            ->update($repackArray);
+        $repack = Repack::find($repackArray['id']);
+        $repack->update($repackArray);
+
+        return $repack;
     }
 }

@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Repack;
 use App\Models\RepackCategory;
+use App\Services\TelegramService;
 use App\Services\XatabService;
 use Illuminate\Console\Command;
 use Telegram\Bot\Laravel\Facades\Telegram;
@@ -27,14 +28,14 @@ class RepacksParseCategoryCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(TelegramService $telegramService): void
     {
         $repackCategories = RepackCategory::all();
 
         $xatabService = new XatabService();
 
         foreach ($repackCategories as $repackCategory) {
-            $xatabService->parseCategory($repackCategory);
+            $xatabService->parseCategory(category: $repackCategory);
 
             $repackCategory->parsed = true;
             $repackCategory->save();
@@ -42,20 +43,6 @@ class RepacksParseCategoryCommand extends Command
             die();
         }
 
-        $this->sendCompletionReportToTelegram();
-
-    }
-
-    private function sendCompletionReportToTelegram(): void //TODO: MOVE TO SERVICE
-    {
-        try {
-            Telegram::sendMessage([
-                'chat_id' => config('telegram.bots.telegram_bot.chat_id'),
-                'text' => 'Job: Repack categories parsing finished successfully!',
-            ]);
-            dump('Report sent to Telegram');
-        } catch (Exception $e) {
-            dump('An error occurred while sending report to Telegram: ', $e->getMessage());
-        }
+        $telegramService->sendCompletionReportToTelegram();
     }
 }
